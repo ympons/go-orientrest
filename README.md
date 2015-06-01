@@ -1,1 +1,1 @@
-# gorient-rest
+# go-orientrest
