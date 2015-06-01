@@ -23,12 +23,12 @@ func (d *ODatabase) Query(query string, params ...interface{}) (*OQueryResult, e
 			return nil, fmt.Errorf("Many parameters in Command function: %d", l)
 		}
 	}
-	var r *OQueryResult
+	r := OQueryResult{}
 	pUrl := fmt.Sprintf("%squery/%s/%s/%s/%d/%s", d.URL, d.Name, lang, query, limit, fetch)
 	if resp, err := d.Session.Get(pUrl, nil, &r, nil); err != nil {
 		return nil, err
 	} else {
 		log.Printf("[Query]. Code: %d Uri: %s", resp.Status(), pUrl)
 	}
-	return r, nil
+	return &r, nil
 }
