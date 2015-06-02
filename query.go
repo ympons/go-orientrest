@@ -12,7 +12,7 @@ func (d *ODatabase) Query(query string, params ...interface{}) (*OQueryResult, e
 		}
 	}()
 
-	lang, limit, fetch := "sql", 20, "*:1"
+	lang, limit, fetch := "sql", 20, "*:0"
 	if params != nil {
 		if l := len(params); l > 0 && l < 3 {
 			if l == 2 {
