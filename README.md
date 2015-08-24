@@ -19,10 +19,6 @@ Tested against OrientDB Server v2.0.9.
 go get -v github.com/ympons/go-orientrest
 ```
 
-
-# Documentation
--
-
 # Usage
 
 ## Init the client
