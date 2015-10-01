@@ -9,10 +9,7 @@ was inspired by [Neoism](https://github.com/jmcvetta/neoism).
 
 # Requirements
 
-[Go 1.1](http://golang.org/doc/go1.1) or later is required.
-
-Tested against OrientDB Server v2.0.9.  
-
+[Go 1.3](http://golang.org/doc/go1.3) or later is required.
 
 # Installation
 
