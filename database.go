@@ -13,7 +13,6 @@ import (
 const (
 	DB_TYPE_GRAPH       = "graph"
 	DB_TYPE_DOCUMENT    = "document"
-	STORAGE_TYPE_LOCAL  = "local"
 	STORAGE_TYPE_PLOCAL = "plocal"
 	STORAGE_TYPE_MEMORY = "memory"
 )
@@ -75,8 +74,12 @@ func (d *ODatabase) configure(params []Options) bool {
 	if params != nil && len(params) > 0 {
 		d.Close()
 		p := params[0]
-		d.Name = p.DbName
-		d.Session.Userinfo = url.UserPassword(p.DbUser, p.DbPass)
+		if p.DbName != "" {
+			d.Name = p.DbName
+		}
+		if p.DbUser != "" && p.DbPass != "" {
+			d.Session.Userinfo = url.UserPassword(p.DbUser, p.DbPass)
+		}
 		return p.Conn
 	}
 	return false
@@ -119,7 +122,7 @@ func (d *ODatabase) DbCreate(dbname, dbstoretype string, dbtype ...string) error
 		}
 		return false
 	}
-	if !contain(dbstoretype, []string{STORAGE_TYPE_LOCAL, STORAGE_TYPE_MEMORY, STORAGE_TYPE_PLOCAL}) {
+	if !contain(dbstoretype, []string{STORAGE_TYPE_MEMORY, STORAGE_TYPE_PLOCAL}) {
 		return fmt.Errorf("[DbCreate]. ERROR: Invalid dbstoretype: %s", dbstoretype)
 	}
 
