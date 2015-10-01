@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ympons/go-orientrest.png?branch=master)](https://travis-ci.org/ympons/go-orientrest)
+
 orientrest - Orientdb client for Go
 ===========================
 
