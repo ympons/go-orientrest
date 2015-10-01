@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/ympons/napping"
+	"github.com/jmcvetta/napping"
 )
 
 const (

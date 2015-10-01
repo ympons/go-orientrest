@@ -9,7 +9,7 @@ import (
 	"log"
 	"io/ioutil"
 
-	"github.com/ympons/napping"
+	"github.com/jmcvetta/napping"
 )
 
 // Hack based on Napping Send method to allow uploading files
