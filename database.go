@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jmcvetta/napping"
+	"github.com/ympons/napping"
 )
 
 const (
@@ -18,9 +18,14 @@ const (
 	STORAGE_TYPE_MEMORY = "memory"
 )
 
+// Wrapper for multipart
+type OSession struct {
+	*napping.Session
+}
+
 // A ODatabase is a REST client connected to a OrientDB Server
 type ODatabase struct {
-	Session *napping.Session
+	Session *OSession
 	URL     string
 	Name    string
 	Classes []OClass `json:"classes"`
@@ -41,7 +46,7 @@ func OrientDB(uri string, params ...Options) (*ODatabase, error) {
 	h.Add("User-Agent", "gorientrest")
 	h.Add("Accept-Encoding", "gzip,deflate")
 	db := &ODatabase{
-		Session: &napping.Session{Header: &h},
+		Session: &OSession{&napping.Session{Header: &h}},
 	}
 
 	if uri == "" {
@@ -157,11 +162,30 @@ func (d *ODatabase) DbInfo(dbname string) ([]OClass, error) {
 }
 
 func (d *ODatabase) DbExport(dbname string) ([]byte, error) {
-	return nil, nil //TODO
+	pUrl := fmt.Sprintf("%sexport/%s", d.URL, dbname)
+	resp, err := d.Session.Get(pUrl, nil, nil, nil)
+	if err != nil {
+		return nil, err
+	} else {
+		log.Printf("DbExport: %d", resp.Status())
+	}
+	return []byte(resp.RawText()), nil
 }
 
-func (d *ODatabase) DbImport(dbname string, file []byte) error {
-	return nil //TODO
+// There is an issue with importing DB using Orient REST Api: https://github.com/orientechnologies/orientdb/issues/3431
+func (d *ODatabase) DbImport(dbname string, file []byte) (interface{}, error) {
+	pUrl := fmt.Sprintf("%simport/%s", d.URL, dbname)
+	r := napping.Request{
+		Method: "POST",
+		Url: pUrl,
+	}
+	resp, err := d.Session.Upload(&r, file)
+	if err != nil {
+		return nil, err
+	} else {
+	//	log.Printf("DbImport: %d", resp.Status())
+	}
+	return resp, nil //TODO
 }
 
 func (d *ODatabase) DbList() (*ODbList, error) {

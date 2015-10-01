@@ -1,7 +1,6 @@
 package orientrest
 
 import (
-	"log"
 	"os"
 	"testing"
 )
@@ -10,7 +9,7 @@ type Fatalistic interface {
 	Fatal(args ...interface{})
 }
 
-func openTestDbinfo(info string) (*ODatabase, error) {
+func openTestDbinfo(info string, c ...bool) (*ODatabase, error) {
 	defaultTo := func(k string, v string) string {
 		if val := os.Getenv(k); val != "" {
 			return val
@@ -21,12 +20,17 @@ func openTestDbinfo(info string) (*ODatabase, error) {
 	dbname := defaultTo("ODATABASE", "testdb")
 	user := defaultTo("OUSER", "admin")
 	pass := defaultTo("OPASS", "admin")
+	conn := true
+
+	if c != nil {
+		conn = false
+	}
 
 	db, err := OrientDB(info, Options{
 		DbName: dbname,
 		DbUser: user,
 		DbPass: pass,
-		Conn: true,
+		Conn: conn,
 	})
 	if err != nil {
 		return nil, err
@@ -52,9 +56,9 @@ func TestOpenDb(t *testing.T) {
 	}
 	urlFunc("http://127.0.0.1:2480")
 }
-/*
+
 func TestCreateDb(t *testing.T) {
-	db, err := openTestDbinfo("")
+	db, err := openTestDbinfo("", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,8 +67,7 @@ func TestCreateDb(t *testing.T) {
 	}
 	db.Close()
 }
-*/
-/*
+
 func TestDropDb(t *testing.T) {
 	db, err := openTestDbinfo("")
 	if err != nil {
@@ -74,7 +77,6 @@ func TestDropDb(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-*/
 
 func TestInfoDb(t *testing.T) {
 	db, err := openTestDbinfo("")
@@ -86,7 +88,7 @@ func TestInfoDb(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("%+v", r)
+	t.Logf("%+v", r)
 	db.Close()
 }
 
@@ -99,7 +101,7 @@ func TestListDbs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("%+v", r)
+	t.Logf("%+v", r)
 	db.Close()
 }
 
@@ -112,6 +114,6 @@ func TestAvailableLangs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("%+v", r)
+	t.Logf("%+v", r)
 	db.Close()
 }

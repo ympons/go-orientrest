@@ -1,25 +1,18 @@
 package main
-/*
-import (
-	"contribute/gorient-rest"
-	"log"
 
-	//gorientrest ".."
+import (
+	"github.com/ympons/go-orientrest"
+	"log"
 )
-*/
+
 func main() {
-/*	a, b := gorientrest.STORAGE_TYPE_LOCAL, gorientrest.DB_TYPE_GRAPH
-	db, _ := gorientrest.OrientDB("")
+	a, b := orientrest.STORAGE_TYPE_LOCAL, orientrest.DB_TYPE_GRAPH
+	db, _ := orientrest.OrientDB("")
 	client, _ := db.Connect(gorientrest.Options{
-		DbName: "testdb",
-		DbUser: "root",
-		DbPass: "root",
+		DbUser: "admin",
+		DbPass: "admin",
 	})
-	client.DbCreate("mibd", gorientrest.STORAGE_TYPE_LOCAL, gorientrest.DB_TYPE_GRAPH)
-	//client.DbDrop("mibd")
-	r, _ := client.Query("select * from V")
-	log.Printf("%+v", r)
+	client.DbCreate("mibd", orientrest.STORAGE_TYPE_LOCAL, orientrest.DB_TYPE_GRAPH)
 	log.Printf("%s %s", a, b)
 	client.Close()
-	*/
 }

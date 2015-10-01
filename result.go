@@ -1,5 +1,9 @@
 package orientrest
 
+type OCommandResult struct {
+	Result []map[string]interface{} `json:"result"`
+}
+
 type OQueryResult struct {
 	Results []map[string]interface{} `json:"result"`
 }

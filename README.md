@@ -83,7 +83,7 @@ client.Close()
 ## Send a command
 
 ```go
-err := client.Command("create class Person extends V")
+result, err := client.Command("create class Person extends V")
 ```
 ## Make a query
 

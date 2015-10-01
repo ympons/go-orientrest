@@ -3,6 +3,7 @@ package orientrest
 import (
 	"fmt"
 	"log"
+	"net/url"
 )
 
 func (d *ODatabase) CmdInterrupt(cmd string) error {
@@ -16,7 +17,7 @@ func (d *ODatabase) CmdInterrupt(cmd string) error {
 }
 
 // TODO Validate lang against AvailableLangs
-func (d *ODatabase) Command(cmd string, params ...interface{}) error {
+func (d *ODatabase) Command(cmd string, params ...interface{}) (*OCommandResult, error) {
 	defer func() {
 		if s := recover(); s != nil {
 			log.Printf("[Command]. ERROR: %+v", s)
@@ -31,17 +32,17 @@ func (d *ODatabase) Command(cmd string, params ...interface{}) error {
 			}
 			lang = params[0].(string)
 		} else {
-			return fmt.Errorf("[Command]. ERROR: Many parameters in Command function: %d", l)
+			return nil, fmt.Errorf("[Command]. ERROR: Many parameters in Command function: %d", l)
 		}
 	}
-	var r interface{}
-	pUrl := fmt.Sprintf("%scommand/%s/%s/%s/%d?format=rid,type,version,class,graph", d.URL, d.Name, lang, cmd, limit)
+	r := OCommandResult{}
+	pUrl := fmt.Sprintf("%scommand/%s/%s/%s/%d?format=rid,type,version,class,graph", d.URL, d.Name, lang, url.QueryEscape(cmd), limit)
 	if resp, err := d.Session.Post(pUrl, nil, &r, nil); err != nil {
-		return err
+		return nil, err
 	} else {
 		log.Printf("[Command]. CODE: %d URI: %s", resp.Status(), pUrl)
 	}
-	return nil
+	return &r, nil
 }
 
 func (d *ODatabase) CmdGetAll(clazz string) (interface{}, error) {

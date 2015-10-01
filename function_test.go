@@ -1,9 +1,6 @@
 package orientrest
-/*
-import (
-	"log"
-	"testing"
-)
+
+import "testing"
 
 func TestSumaFunction(t *testing.T) {
 	db, err := openTestDbinfo("")
@@ -11,7 +8,7 @@ func TestSumaFunction(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = db.Command(`create function sumaFunc "return a + b" PARAMATERS [a,b]`)
+	_, err = db.Command(`create function sumaFunc "return a + b" PARAMATERS [a,b]`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -20,8 +17,7 @@ func TestSumaFunction(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("%+v", r)
+	t.Logf("%+v", r)
 
 	db.Close()
 }
-*/

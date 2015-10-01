@@ -3,6 +3,7 @@ package orientrest
 import (
 	"fmt"
 	"log"
+	"net/url"
 )
 
 func (d *ODatabase) Query(query string, params ...interface{}) (*OQueryResult, error) {
@@ -24,7 +25,7 @@ func (d *ODatabase) Query(query string, params ...interface{}) (*OQueryResult, e
 		}
 	}
 	r := OQueryResult{}
-	pUrl := fmt.Sprintf("%squery/%s/%s/%s/%d/%s", d.URL, d.Name, lang, query, limit, fetch)
+	pUrl := fmt.Sprintf("%squery/%s/%s/%s/%d/%s", d.URL, d.Name, lang, url.QueryEscape(query), limit, fetch)
 	if resp, err := d.Session.Get(pUrl, nil, &r, nil); err != nil {
 		return nil, err
 	} else {

@@ -1,9 +1,6 @@
 package orientrest
 
-import (
-	"log"
-	"testing"
-)
+import "testing"
 
 func TestQuery(t *testing.T) {
 	db, err := openTestDbinfo("")
@@ -14,7 +11,7 @@ func TestQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("TestQuery: %+v", r.Results)
+	t.Logf("TestQuery: %+v", r.Results)
 	db.Close()
 }
 
@@ -27,7 +24,7 @@ func TestPeaEatersQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("TestPeaEatersQuery: %+v", r)
+	t.Logf("TestPeaEatersQuery: %+v", r)
 	db.Close()
 }
 
@@ -40,11 +37,11 @@ func TestAnimalFoodsQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("TestAnimalFoodsQuery: animal_foods: %+v", animal_foods)
+	t.Logf("TestAnimalFoodsQuery: animal_foods: %+v", animal_foods)
 	animal, err := db.Query("select name from (select expand(in('Eat')) from Food where name = 'pea')")
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Printf("TestAnimalFoodsQuery: animal: %+v", animal)
+	t.Logf("TestAnimalFoodsQuery: animal: %+v", animal)
 	db.Close()
 }
