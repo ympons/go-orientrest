@@ -17,11 +17,6 @@ const (
 	STORAGE_TYPE_MEMORY = "memory"
 )
 
-// Wrapper for multipart
-type OSession struct {
-	*napping.Session
-}
-
 // A ODatabase is a REST client connected to a OrientDB Server
 type ODatabase struct {
 	Session *OSession

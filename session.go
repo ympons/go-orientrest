@@ -12,6 +12,11 @@ import (
 	"github.com/jmcvetta/napping"
 )
 
+// Wrapper for multipart
+type OSession struct {
+	*napping.Session
+}
+
 // Hack based on Napping Send method to allow uploading files
 func (s *OSession) Upload(r *napping.Request, file []byte) (response string, err error) {
 	r.Method = strings.ToUpper(r.Method)
