@@ -2,6 +2,8 @@
 orientrest - Orientdb client for Go
 ===========================
 
+![Orientrest Logo](https://raw.github.com/ympons/go-orientrest/master/logo/orientrest.png)
+
 Package `orientrest` is a [Go](http://golang.org) client library providing access to
 the [OrientDB](http://orientdb.com/) document/graph database via its REST API. Orientrest 
 was inspired by [Neoism](https://github.com/jmcvetta/neoism).
