@@ -1,5 +1,5 @@
 package orientrest
-
+/*
 import "testing"
 
 func TestQuery(t *testing.T) {
@@ -45,3 +45,4 @@ func TestAnimalFoodsQuery(t *testing.T) {
 	t.Logf("TestAnimalFoodsQuery: animal: %+v", animal)
 	db.Close()
 }
+*/

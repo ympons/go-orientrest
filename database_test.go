@@ -2,6 +2,7 @@ package orientrest
 
 import (
 	"os"
+	"log"
 	"testing"
 )
 
@@ -9,33 +10,46 @@ type Fatalistic interface {
 	Fatal(args ...interface{})
 }
 
-func openTestDbinfo(info string, c ...bool) (*ODatabase, error) {
-	defaultTo := func(k string, v string) string {
-		if val := os.Getenv(k); val != "" {
-			return val
-		}
-		os.Setenv(k, v)
-		return v
+var defaultTo = func(k string, v string) string {
+	if val := os.Getenv(k); val != "" {
+		return val
 	}
+	os.Setenv(k, v)
+	return v
+}
+
+func openTestDb(t Fatalistic, server string) *Database {
 	dbname := defaultTo("ODATABASE", "testdb")
-	user := defaultTo("OUSER", "admin")
-	pass := defaultTo("OPASS", "admin")
-	conn := true
+	user := defaultTo("OUSER", "root")
+	pass := defaultTo("OPASS", "root")
 
-	if c != nil {
-		conn = false
-	}
-
-	db, err := OrientDB(info, Options{
-		DbName: dbname,
-		DbUser: user,
-		DbPass: pass,
-		Conn: conn,
-	})
+	client, err := New("")
 	if err != nil {
-		return nil, err
+		t.Fatalf(err)
 	}
-	return db, nil
+
+	db, err := client.Open(dbname, user, pass)
+	if err != nil {
+		t.Fatalf(err)
+	}
+	return db
+}
+
+func openTestAdmin(t Fatalistic, server string) *Admin {
+	user := defaultTo("OUSER", "root")
+	pass := defaultTo("OPASS", "root")
+
+	client, err := New("")
+	if err != nil {
+		t.Fatalf(err)
+	}
+
+	admin, err := client.Auth(user, pass)
+	if err != nil {
+		t.Fatalf(err)
+	}
+
+	return admin
 }
 
 func openTestDb(t Fatalistic) *ODatabase {
@@ -46,6 +60,7 @@ func openTestDb(t Fatalistic) *ODatabase {
 	return db
 }
 
+/*
 func TestOpenDb(t *testing.T) {
 	urlFunc := func(url string) {
 		db, err := openTestDbinfo(url)
@@ -117,3 +132,4 @@ func TestAvailableLangs(t *testing.T) {
 	t.Logf("%+v", r)
 	db.Close()
 }
+*/

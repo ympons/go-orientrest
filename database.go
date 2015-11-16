@@ -2,6 +2,150 @@ package orientrest
 
 import (
 	"fmt"
+	"encoding/json"
+	"mime/multipart"
+	"net/http"
+)
+
+type DatabaseType string
+
+const (
+	DB_TYPE_GRAPH       DatabaseType = "graph"
+	DB_TYPE_DOCUMENT    DatabaseType = "document"
+)
+
+type StoreType string
+
+const (
+	STORAGE_TYPE_PLOCAL StoreType = "plocal"
+	STORAGE_TYPE_MEMORY StoreType = "memory"
+)
+
+type Admin struct {
+	client *Client
+}
+
+func (a *Admin) DbCreate(name string, dbType DatabaseType, storeType StoreType) error {
+	u := fmt.Sprintf("database/%s/%s/%s", name, storeType, dbType)
+
+	req, err := s.client.NewRequest("POST", u, nil)
+	if err != nil {
+		return err
+	}
+
+	var sub json.RawMessage
+	err = a.client.Do(req, sub)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *Admin) DbDrop(name string) error {
+	u := fmt.Sprintf("database/%s", name)
+
+	req, err := a.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.client.Do(req, nil)
+}
+
+func (a *Admin) DbInfo(name string) ([]OClass, error) {
+	u := fmt.Sprintf("database/%s", name)
+
+	req, err := a.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+	var r json.RawMessage
+	err = a.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (a *Admin) DbExport(name string) (interface{}, error) {
+	u := fmt.Sprintf("export/%s", dbname)
+
+	req, err := a.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var r json.RawMessage
+	err = a.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+// There is an issue with importing DB using Orient REST Api: https://github.com/orientechnologies/orientdb/issues/3431
+func (a *Admin) DbImport(name string, file []byte) (interface{}, error) {
+	buf := new(bytes.Buffer)
+	w := multipart.NewWriter(buf)
+	part, err := w.CreateFormFile("filename", "dbimport")
+	if err != nil {
+		return nil, err
+	}
+	part.Write(file)
+	w.Close()
+
+
+	u := fmt.Sprintf("import/%s", name)
+	req, err := a.client.NewUploadRequest(u, buf, w.FormDataContentType(), buf.Len())
+	if err != nil {
+		return err
+	}
+
+	var sub json.RawMessage
+	err := a.client.Do(req, sub)
+	if err != nil {
+		return nil, err
+	}
+	return sub, nil
+}
+
+func (a *Admin) DbList() (*ODbList, error) {
+	u := "listDatabases"
+
+	req, err := a.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return err
+	}
+
+	var r *ODbList
+	err = a.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+/*
+func (a *Admin) DbAvailableLangs(dbname string) (*ODbLang, error) {
+	pUrl := fmt.Sprintf("%ssupportedLanguages/%s", d.URL, dbname)
+	var r *ODbLang
+	if resp, err := d.Session.Get(pUrl, nil, &r, nil); err != nil {
+		return nil, err
+	} else {
+		log.Printf("DbAvailableLangs: %d", resp.Status())
+	}
+	return r, nil
+}
+
+func (a *Admin) Close() error {
+	return nil
+}
+*/
+/*
+
+import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,12 +154,7 @@ import (
 	"github.com/jmcvetta/napping"
 )
 
-const (
-	DB_TYPE_GRAPH       = "graph"
-	DB_TYPE_DOCUMENT    = "document"
-	STORAGE_TYPE_PLOCAL = "plocal"
-	STORAGE_TYPE_MEMORY = "memory"
-)
+
 
 // A ODatabase is a REST client connected to a OrientDB Server
 type ODatabase struct {
@@ -207,3 +346,4 @@ func (d *ODatabase) DbAvailableLangs(dbname string) (*ODbLang, error) {
 	}
 	return r, nil
 }
+*/

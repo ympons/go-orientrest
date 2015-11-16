@@ -1,5 +1,5 @@
 package orientrest
-
+/*
 import (
 	"fmt"
 	"log"
@@ -33,3 +33,4 @@ func (d *ODatabase) Query(query string, params ...interface{}) (*OQueryResult, e
 	}
 	return &r, nil
 }
+*/

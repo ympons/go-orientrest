@@ -1,5 +1,5 @@
 package orientrest
-
+/*
 import (
 	"bytes"
 	"net/http"
@@ -122,3 +122,4 @@ func (s *OSession) Upload(r *napping.Request, file []byte) (response string, err
 
 	return
 }
+*/

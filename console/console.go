@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	client, _ := orientrest.New("")
+	/*
 	db, _ := orientrest.OrientDB("", orientrest.Options{
 		DbUser: "root",
 		DbPass: "root",
@@ -27,4 +29,5 @@ func main() {
 		log.Printf("%v", info)
 	}
 	client.Close()
+	*/
 }
