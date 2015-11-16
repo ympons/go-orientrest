@@ -2,7 +2,6 @@ package orientrest
 
 import (
 	"os"
-	"log"
 	"testing"
 )
 
@@ -25,12 +24,12 @@ func openTestDb(t Fatalistic, server string) *Database {
 
 	client, err := New("")
 	if err != nil {
-		t.Fatalf(err)
+		t.Fatal(err)
 	}
 
 	db, err := client.Open(dbname, user, pass)
 	if err != nil {
-		t.Fatalf(err)
+		t.Fatal(err)
 	}
 	return db
 }
@@ -41,85 +40,59 @@ func openTestAdmin(t Fatalistic, server string) *Admin {
 
 	client, err := New("")
 	if err != nil {
-		t.Fatalf(err)
+		t.Fatal(err)
 	}
 
 	admin, err := client.Auth(user, pass)
 	if err != nil {
-		t.Fatalf(err)
+		t.Fatal(err)
 	}
 
 	return admin
 }
 
-func openTestDb(t Fatalistic) *ODatabase {
-	db, err := openTestDbinfo("")
-	if err != nil {
-		t.Fatal(err)
-	}
-	return db
-}
-
-/*
-func TestOpenDb(t *testing.T) {
-	urlFunc := func(url string) {
-		db, err := openTestDbinfo(url)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer db.Close()
-	}
-	urlFunc("http://127.0.0.1:2480")
+func TestAuthAdmin(t *testing.T) {
+	openTestAdmin(t, "")
 }
 
 func TestCreateDb(t *testing.T) {
-	db, err := openTestDbinfo("", false)
-	if err != nil {
+	admin := openTestAdmin(t, "")
+	if err := admin.DbCreate("testdb", DatabaseType(DB_TYPE_GRAPH), StoreType(STORAGE_TYPE_PLOCAL)); err != nil {
 		t.Fatal(err)
 	}
-	if err := db.DbCreate("testdb", STORAGE_TYPE_PLOCAL, DB_TYPE_GRAPH); err != nil {
-		t.Fatal(err)
-	}
-	db.Close()
+	admin.Close()
 }
 
 func TestDropDb(t *testing.T) {
-	db, err := openTestDbinfo("")
-	if err != nil {
+	admin := openTestAdmin(t, "")
+	if err := admin.DbDrop("testdb"); err != nil {
 		t.Fatal(err)
 	}
-	if err := db.DbDrop("testdb"); err != nil {
-		t.Fatal(err)
-	}
+	admin.Close()
 }
 
 func TestInfoDb(t *testing.T) {
-	db, err := openTestDbinfo("")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	r, err := db.DbInfo("testdb")
+	admin := openTestAdmin(t, "")
+	r, err := admin.DbInfo("testdb")
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("%+v", r)
-	db.Close()
+	admin.Close()
 }
+
 
 func TestListDbs(t *testing.T) {
-	db, err := openTestDbinfo("")
-	if err != nil {
-		t.Fatal(err)
-	}
-	r, err := db.DbList()
+	admin := openTestAdmin(t, "")
+	r, err := admin.DbList()
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("%+v", r)
-	db.Close()
+	admin.Close()
 }
 
+/*
 func TestAvailableLangs(t *testing.T) {
 	db, err := openTestDbinfo("")
 	if err != nil {

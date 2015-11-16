@@ -1,5 +1,5 @@
 package orientrest
-/*
+
 type OCommandResult struct {
 	Result []map[string]interface{} `json:"result"`
 }
@@ -23,4 +23,3 @@ type ODbLang struct {
 	Languages []string `json:"languages"`
 	OCommon
 }
-*/

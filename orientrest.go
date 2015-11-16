@@ -1,7 +1,10 @@
 package orientrest
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -97,6 +100,8 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 		pwd, _ := userInfo.Password()
 		req.SetBasicAuth(userInfo.Username(), pwd)
 	}
+
+	return req, nil
 }
 
 
@@ -122,6 +127,8 @@ func (c *Client) NewUploadRequest(path string, reader io.Reader, mediaType strin
 	if c.UserAgent != "" {
 		req.Header.Add("User-Agent", c.UserAgent)
 	}
+
+	return req, nil
 }
 
 //  Do is used to send an API request and parse the response.
@@ -133,6 +140,11 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 
 	defer resp.Body.Close()
 
+	err = CheckResponse(resp)
+	if err != nil {
+		return err
+	}
+
 	resBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -143,4 +155,16 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 	}
 
 	return nil
+}
+
+func CheckResponse(r *http.Response) error {
+	if c := r.StatusCode; 200 <= c && c <= 299 {
+		return nil
+	}
+	var errorR interface{}
+	data, err := ioutil.ReadAll(r.Body)
+	if err == nil && data != nil {
+		json.Unmarshal(data, &errorR)
+	}
+	return fmt.Errorf("%+v", errorR)
 }

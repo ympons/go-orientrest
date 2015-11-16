@@ -1,5 +1,5 @@
 package orientrest
-
+/*
 import (
 	"fmt"
 	"log"
@@ -48,3 +48,4 @@ func (d *ODatabase) Command(cmd string, params ...interface{}) (*OCommandResult,
 func (d *ODatabase) CmdGetAll(clazz string) (interface{}, error) {
 	return nil, nil
 }
+*/

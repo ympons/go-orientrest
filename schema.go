@@ -1,5 +1,11 @@
 package orientrest
 
+type ODatabase struct {
+	Name    string   `json:"name"`
+	Type    string   `json:"type"`
+	Classes []OClass `json:"classes"`
+}
+
 type OClass struct {
 	Name             string            `json:"name"`
 	ShortName        string            `json:"shortname,omitempty"`

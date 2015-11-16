@@ -1,10 +1,10 @@
 package orientrest
 
 import (
+	"bytes"
 	"fmt"
-	"encoding/json"
+	"log"
 	"mime/multipart"
-	"net/http"
 )
 
 type DatabaseType string
@@ -28,16 +28,18 @@ type Admin struct {
 func (a *Admin) DbCreate(name string, dbType DatabaseType, storeType StoreType) error {
 	u := fmt.Sprintf("database/%s/%s/%s", name, storeType, dbType)
 
-	req, err := s.client.NewRequest("POST", u, nil)
+	req, err := a.client.NewRequest("POST", u, nil)
 	if err != nil {
 		return err
 	}
 
-	var sub json.RawMessage
-	err = a.client.Do(req, sub)
+	var r interface{}
+	err = a.client.Do(req, &r)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("%+v",r)
 
 	return nil
 }
@@ -47,20 +49,20 @@ func (a *Admin) DbDrop(name string) error {
 
 	req, err := a.client.NewRequest("DELETE", u, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return s.client.Do(req, nil)
+	return a.client.Do(req, nil)
 }
 
-func (a *Admin) DbInfo(name string) ([]OClass, error) {
+func (a *Admin) DbInfo(name string) (*ODatabase, error) {
 	u := fmt.Sprintf("database/%s", name)
 
 	req, err := a.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
-	var r json.RawMessage
+	var r *ODatabase
 	err = a.client.Do(req, &r)
 	if err != nil {
 		return nil, err
@@ -69,14 +71,14 @@ func (a *Admin) DbInfo(name string) ([]OClass, error) {
 }
 
 func (a *Admin) DbExport(name string) (interface{}, error) {
-	u := fmt.Sprintf("export/%s", dbname)
+	u := fmt.Sprintf("export/%s", name)
 
 	req, err := a.client.NewRequest("GET", u, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var r json.RawMessage
+	var r interface{}
 	err = a.client.Do(req, &r)
 	if err != nil {
 		return nil, err
@@ -97,17 +99,17 @@ func (a *Admin) DbImport(name string, file []byte) (interface{}, error) {
 
 
 	u := fmt.Sprintf("import/%s", name)
-	req, err := a.client.NewUploadRequest(u, buf, w.FormDataContentType(), buf.Len())
-	if err != nil {
-		return err
-	}
-
-	var sub json.RawMessage
-	err := a.client.Do(req, sub)
+	req, err := a.client.NewUploadRequest(u, buf, w.FormDataContentType(), int64(buf.Len()))
 	if err != nil {
 		return nil, err
 	}
-	return sub, nil
+
+	var r interface{}
+	err = a.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 func (a *Admin) DbList() (*ODbList, error) {
@@ -115,7 +117,7 @@ func (a *Admin) DbList() (*ODbList, error) {
 
 	req, err := a.client.NewRequest("GET", u, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var r *ODbList
@@ -124,6 +126,19 @@ func (a *Admin) DbList() (*ODbList, error) {
 		return nil, err
 	}
 	return r, nil
+}
+
+func (a *Admin) Close() error {
+	return nil
+}
+
+type Database struct {
+	name string
+	client *Client
+}
+
+func (d *Database) Close() error {
+	return nil
 }
 
 /*
