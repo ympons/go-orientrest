@@ -1,7 +1,14 @@
 package orientrest
-/*
+
 import "testing"
 
+func TestCommand(t *testing.T) {
+	db := openTestDb(t, "")
+	db.Command(NewCommandSQL("create class Animal extends V"))
+	db.Close()
+}
+
+/*
 func TestInterruptCmd(t *testing.T) {
 	db, err := openTestDbinfo("")
 	if err != nil {

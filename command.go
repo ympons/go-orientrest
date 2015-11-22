@@ -1,51 +1,142 @@
 package orientrest
-/*
+
 import (
 	"fmt"
-	"log"
 	"net/url"
 )
 
-func (d *ODatabase) CmdInterrupt(cmd string) error {
-	pUrl := fmt.Sprintf("%sdbconnection/%s", d.URL, d.Name)
-	if resp, err := d.Session.Post(pUrl, cmd, nil, nil); err != nil {
-		return err
-	} else {
-		log.Printf("[CmdInterrupt]. CODE: %d URI: %s", resp.Status(), pUrl)
+type OCommonSQL interface {
+	Limit(int) OCommonSQL
+	Lang(string) OCommonSQL
+	FetchPlan(string) OCommonSQL
+}
+
+type commonSQL struct {
+	text string
+	params []interface{}
+	limit int
+	lang string
+	fetchPlan string
+}
+
+func (c *commonSQL) Limit(limit int) OCommonSQL {
+	c.limit = limit
+	return c
+}
+
+func (c *commonSQL) Lang(lang string) OCommonSQL {
+	c.lang = lang
+	return c
+}
+
+func (c *commonSQL) FetchPlan(fetch string) OCommonSQL {
+	c.fetchPlan = fetch
+	return c
+}
+
+type querySQL struct {
+	*commonSQL
+}
+
+type commandSQL struct {
+	*commonSQL
+}
+
+func NewCommandSQL(cmd string, params ...interface{}) commandSQL {
+	return commandSQL{&commonSQL{
+		text: cmd,
+		params: params,
+		limit: -1,
+		lang: "sql",
+		fetchPlan: "*:0",
+	}}
+}
+
+func NewQuerySQL(query string, params ...interface{}) querySQL {
+	return querySQL{&commonSQL{
+		text: query,
+		params: params,
+		limit: -1,
+		lang: "sql",
+		fetchPlan: "*:0",
+	}}
+}
+
+func (d *Database) command_(cmd commandSQL) (*OResult, error) {
+	u := fmt.Sprintf("command/%s/%s/%s/%d/%s?format=rid,type,version,class,graph",
+		d.name,
+		cmd.commonSQL.lang,
+		url.QueryEscape(cmd.commonSQL.text),
+		cmd.commonSQL.limit,
+		cmd.commonSQL.fetchPlan)
+
+	var payload interface{}
+	if params := cmd.commonSQL.params; params != nil {
+		payload = map[string]interface{}{
+			"command": cmd.commonSQL.text,
+			"parameters": cmd.commonSQL.params,
+		}
 	}
+	req, err := d.client.NewRequest("POST", u, payload)
+	if err != nil {
+		return nil, err
+	}
+
+	var r *OResult
+	err = d.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (d *Database) query_(query querySQL) (*OResult, error) {
+	u := fmt.Sprintf("query/%s/%s/%s/%d/%s",
+		d.name,
+		query.commonSQL.lang,
+		url.QueryEscape(query.commonSQL.text),
+		query.commonSQL.limit,
+		query.commonSQL.fetchPlan)
+
+	req, err := d.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var r *OResult
+	err = d.client.Do(req, &r)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (d *Database) Command(cmd OCommonSQL) (*OResult, error) {
+	switch v := cmd.(type) {
+		case querySQL:
+			return d.query_(v)
+		case commandSQL:
+			return d.command_(v)
+	}
+	return nil, fmt.Errorf("")
+}
+
+func (d *Database) CmdInterrupt(cmd string) error {
+	u := fmt.Sprintf("dbconnection/%s", d.name)
+
+	req, err := d.client.NewRequest("POST", u, url.QueryEscape(cmd))
+	if err != nil {
+		return err
+	}
+
+	err = d.client.Do(req, nil)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-// TODO Validate lang against AvailableLangs
-func (d *ODatabase) Command(cmd string, params ...interface{}) (*OCommandResult, error) {
-	defer func() {
-		if s := recover(); s != nil {
-			log.Printf("[Command]. ERROR: %+v", s)
-		}
-	}()
-
-	lang, limit := "sql", 20
-	if params != nil {
-		if l := len(params); l > 0 && l < 3 {
-			if l == 2 {
-				limit = params[1].(int)
-			}
-			lang = params[0].(string)
-		} else {
-			return nil, fmt.Errorf("[Command]. ERROR: Many parameters in Command function: %d", l)
-		}
-	}
-	r := OCommandResult{}
-	pUrl := fmt.Sprintf("%scommand/%s/%s/%s/%d?format=rid,type,version,class,graph", d.URL, d.Name, lang, url.QueryEscape(cmd), limit)
-	if resp, err := d.Session.Post(pUrl, nil, &r, nil); err != nil {
-		return nil, err
-	} else {
-		log.Printf("[Command]. CODE: %d URI: %s", resp.Status(), pUrl)
-	}
-	return &r, nil
-}
-
-func (d *ODatabase) CmdGetAll(clazz string) (interface{}, error) {
+func (d *Database) CmdGetAll(clazz string) (interface{}, error) {
 	return nil, nil
 }
-*/

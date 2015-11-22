@@ -57,7 +57,16 @@ func New(uri string) (*Client, error) {
 }
 
 func (c *Client) Open(dbname, username, password string) (*Database, error) {
-	return nil, nil
+	if username != "" && password != "" {
+		if dbname == "" {
+			return nil, fmt.Errorf("Database name cannot be empty")
+		}
+		c.UserInfo = url.UserPassword(username, password)
+
+		db := &Database{name: dbname, client: c}
+		return db.connect()
+	}
+	return nil, fmt.Errorf("Username and Password cannot be empty")
 }
 
 func (c *Client) Auth(username, password string) (*Admin, error) {
@@ -103,7 +112,6 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 
 	return req, nil
 }
-
 
 func (c *Client) NewUploadRequest(path string, reader io.Reader, mediaType string, size int64) (*http.Request, error) {
 	rel, err := url.Parse(path)

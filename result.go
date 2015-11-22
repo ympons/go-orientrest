@@ -1,11 +1,7 @@
 package orientrest
 
-type OCommandResult struct {
+type OResult struct {
 	Result []map[string]interface{} `json:"result"`
-}
-
-type OQueryResult struct {
-	Results []map[string]interface{} `json:"result"`
 }
 
 type OCommon struct {

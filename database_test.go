@@ -52,14 +52,22 @@ func openTestAdmin(t Fatalistic, server string) *Admin {
 }
 
 func TestAuthAdmin(t *testing.T) {
-	openTestAdmin(t, "")
+	admin := openTestAdmin(t, "")
+	admin.Close()
+}
+
+func TestOpenDb(t *testing.T) {
+	db := openTestDb(t, "")
+	db.Close()
 }
 
 func TestCreateDb(t *testing.T) {
 	admin := openTestAdmin(t, "")
-	if err := admin.DbCreate("testdb", DatabaseType(DB_TYPE_GRAPH), StoreType(STORAGE_TYPE_PLOCAL)); err != nil {
+	d, err := admin.DbCreate("testdb", DatabaseType(DB_TYPE_GRAPH), StoreType(STORAGE_TYPE_PLOCAL))
+	if err != nil {
 		t.Fatal(err)
 	}
+	t.Logf("%+v", d)
 	admin.Close()
 }
 
@@ -81,7 +89,6 @@ func TestInfoDb(t *testing.T) {
 	admin.Close()
 }
 
-
 func TestListDbs(t *testing.T) {
 	admin := openTestAdmin(t, "")
 	r, err := admin.DbList()
@@ -92,17 +99,12 @@ func TestListDbs(t *testing.T) {
 	admin.Close()
 }
 
-/*
 func TestAvailableLangs(t *testing.T) {
-	db, err := openTestDbinfo("")
-	if err != nil {
-		t.Fatal(err)
-	}
-	r, err := db.DbAvailableLangs("testdb")
+	admin := openTestAdmin(t, "")
+	r, err := admin.DbAvailableLangs("testdb")
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("%+v", r)
-	db.Close()
+	admin.Close()
 }
-*/

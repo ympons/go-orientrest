@@ -5,13 +5,12 @@ orientrest - Orientdb client for Go
 ![Orientrest Logo](https://raw.github.com/ympons/go-orientrest/master/logo/orientrest.png)
 
 Package `orientrest` is a [Go](http://golang.org) client library providing access to
-the [OrientDB](http://orientdb.com/) document/graph database via its REST API. Orientrest 
-was inspired by [Neoism](https://github.com/jmcvetta/neoism).
+the [OrientDB](http://orientdb.com/) document/graph database via its REST API.  
 
 
 # Requirements
 
-[Go 1.3](http://golang.org/doc/go1.3) or later is required.
+[Go 1.4](http://golang.org/doc/go1.3) or later is required.
 
 # Installation
 
@@ -22,15 +21,9 @@ go get -v github.com/ympons/go-orientrest
 # Usage
 
 ## Init the client
-There are some ways initialize the client
 
 ```go
-client, err := orientrest.OrientDB("http://localhost:2480/", orientrest.Options{
-	DbName: dbname,
-	DbUser: user,
-	DbPass: pass,
-	Conn: true,
-})
+client, err := orientrest.New("http://localhost:2480/")
 ```
 
 ```go
@@ -91,4 +84,6 @@ _, err := client.Command("create class Person extends V")
 result, err := client.Query("select * from V")
 ```
 
-This is Free Software, released under the terms of the [GPLv3](http://www.gnu.org/copyleft/gpl.html).
+# License
+
+MIT License, see [LICENSE.md](./LICENSE).
