@@ -26,62 +26,66 @@ go get -v github.com/ympons/go-orientrest
 client, err := orientrest.New("http://localhost:2480/")
 ```
 
+## Connect to the server to manage databases
+
+Authenticate to the server
+
 ```go
-db, err := orientrest.OrientDB("http://localhost:2480/")
-client, err := db.Connect(orientrest.Options{
-	DbName: dbname,
-	DbUser: user,
-	DbPass: pass,
-})
+admin, err := client.Auth("user", "pass")
 ```
 
+Close admin
+
 ```go
-db, err := orientrest.OrientDB("http://localhost:2480/")
-db.Configure(orientrest.Options{
-	DbName: dbname,
-	DbUser: user,
-	DbPass: pass,
-})
-client, err := orientrest.Connect()
+admin.Close()
 ```
 
-## Create Database 
+Create Database
 
 ```go
-err := client.DbCreate("my_new_database", orientrest.STORAGE_TYPE_PLOCAL, orientrest.DB_TYPE_GRAPH)
+_, err := admin.DbCreate("database_name", orientrest.DB_TYPE_GRAPH, orientrest.STORAGE_TYPE_PLOCAL)
 ```
 
-## Drop Database
+Drop Database
 
 ```go
-err := client.DbDrop(client.Name)
+err := admin.DbDrop("database_name")
 ```
 
-## Get the list of databases
+Get the list of databases
 
 ```go
-list, err := client.DbList()
+list, err := admin.DbList()
 ```
 
-## Get the available languages
+Get the available languages
 
 ```go
-langs, err := client.DbAvailableLangs(client.Name)
+langs, err := admin.DbAvailableLangs("database_name")
 ```
-## Close Database
+
+## Open a database
 
 ```go
-client.Close()
+db, err := client.Open("database_name", "dbuser", "dbpassword")
 ```
-## Send a command
+
+Send a command
 
 ```go
-_, err := client.Command("create class Person extends V")
+_, err := db.Command(NewCommandSQL("create class Person extends V"))
 ```
-## Make a query
+
+Make a query
 
 ```go
-result, err := client.Query("select * from V")
+result, err := db.Command(NewQuerySQL("select * from V"))
+```
+
+Close database
+
+```go
+db.Close()
 ```
 
 # License

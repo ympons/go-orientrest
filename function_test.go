@@ -3,12 +3,8 @@ package orientrest
 import "testing"
 
 func TestSumaFunction(t *testing.T) {
-	db, err := openTestDbinfo("")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = db.Command(`create function sumaFunc "return a + b" PARAMATERS [a,b]`)
+	db := openTestDb(t, "")
+	_, err = db.Command(NewFunctionSQL(`sumaFunc`, 1, 2))
 	if err != nil {
 		t.Fatal(err)
 	}
