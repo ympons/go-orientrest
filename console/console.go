@@ -6,28 +6,20 @@ import (
 )
 
 func main() {
-	client, _ := orientrest.New("")
-	/*
-	db, _ := orientrest.OrientDB("", orientrest.Options{
-		DbUser: "root",
-		DbPass: "root",
-	})
-	if err := db.DbCreate("testdb", orientrest.STORAGE_TYPE_PLOCAL, orientrest.DB_TYPE_GRAPH); err != nil {
-		log.Printf("ERROR: Creating db... %+v", err)
-	}
-	client, err := db.Connect(orientrest.Options{
-		DbName: "testdb",
-		DbUser: "admin",
-		DbPass: "admin",
-	})
+	client, err := orientrest.New("")
 	if err != nil {
-		log.Printf("ERROR: Connecting db... %+v", err)
+		log.Fatal(err)
 	}
-	if info, err := client.DbInfo(client.Name); err != nil {
-		log.Fatalf("ERROR: Getting info... %+v", err)
-	} else {
-		log.Printf("%v", info)
+
+	admin, err := client.Auth("admin", "admin")
+	if err != nil {
+		log.Fatal(err)
 	}
-	client.Close()
-	*/
+
+	_, err := admin.DbCreate("testdb", orientrest.DB_TYPE_GRAPH, orientrest.STORAGE_TYPE_PLOCAL)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	admin.Close()
 }
