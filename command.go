@@ -118,7 +118,7 @@ func (d *Database) Command(cmd OCommonSQL) (*OResult, error) {
 		case commandSQL:
 			return d.command_(v)
 	}
-	return nil, fmt.Errorf("")
+	return nil, fmt.Errorf("orientrest: Invalid sql command")
 }
 
 func (d *Database) CmdInterrupt(cmd string) error {
