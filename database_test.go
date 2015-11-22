@@ -63,7 +63,7 @@ func TestOpenDb(t *testing.T) {
 
 func TestCreateDb(t *testing.T) {
 	admin := openTestAdmin(t, "")
-	d, err := admin.DbCreate("testdb", DatabaseType(DB_TYPE_GRAPH), StoreType(STORAGE_TYPE_PLOCAL))
+	d, err := admin.DbCreate("testdb", DB_TYPE_GRAPH, STORAGE_TYPE_PLOCAL)
 	if err != nil {
 		t.Fatal(err)
 	}

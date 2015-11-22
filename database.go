@@ -140,6 +140,7 @@ func (a *Admin) DbAvailableLangs(name string) (*ODbLang, error) {
 }
 
 func (a *Admin) Close() error {
+	a.client.UserInfo = nil
 	return nil
 }
 
@@ -176,6 +177,7 @@ func (d *Database) Close() error {
 	}
 
 	d.name = "" // Maybe "d = nil" or d = &ODatabase{} is better
+	d.client.UserInfo = nil
 
 	return nil
 }
