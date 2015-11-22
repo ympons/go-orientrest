@@ -16,9 +16,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err := admin.DbCreate("testdb", orientrest.DB_TYPE_GRAPH, orientrest.STORAGE_TYPE_PLOCAL)
+	_, err = admin.DbCreate("testdb", orientrest.DB_TYPE_GRAPH, orientrest.STORAGE_TYPE_PLOCAL)
 	if err != nil {
-		t.Fatal(err)
+		log.Fatal(err)
 	}
 
 	admin.Close()
