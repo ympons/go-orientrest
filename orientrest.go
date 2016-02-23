@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,6 +18,11 @@ const (
 	userAgent      = "go-orientrest/" + libVersion
 
 	defaultMediaType = "application/octet-stream"
+)
+
+var (
+	ErrUserPasswordEmpty = errors.New("orientrest: Username and Password cannot be empty")
+	ErrDbNameEmpty = errors.New("orientrest: Database name cannot be empty")
 )
 
 // A Client manages communications with the OrientDB Server API.
@@ -59,14 +65,14 @@ func New(uri string) (*Client, error) {
 func (c *Client) Open(dbname, username, password string) (*Database, error) {
 	if username != "" && password != "" {
 		if dbname == "" {
-			return nil, fmt.Errorf("orientrest: Database name cannot be empty")
+			return nil, ErrDbNameEmpty
 		}
 		c.UserInfo = url.UserPassword(username, password)
 
 		db := &Database{name: dbname, client: c}
 		return db.connect()
 	}
-	return nil, fmt.Errorf("orientrest: Username and Password cannot be empty")
+	return nil, ErrUserPasswordEmpty
 }
 
 func (c *Client) Auth(username, password string) (*Admin, error) {
@@ -74,7 +80,7 @@ func (c *Client) Auth(username, password string) (*Admin, error) {
 		c.UserInfo = url.UserPassword(username, password)
 		return &Admin{client: c}, nil
 	}
-	return nil, fmt.Errorf("orientrest: Username and Password cannot be empty")
+	return nil, ErrUserPasswordEmpty
 }
 
 // NewRequest generates an API request It handles encoding
