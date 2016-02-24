@@ -14,7 +14,7 @@ type OClass struct {
 	ClusterIds       []int             `json:"clusters"`
 	SuperClass       string            `json:"superClass"`
 	OverSize         float32           `json:"oversize,omitempty"`
-	StrictMode       bool              `json:strictMode,omitempty`
+	StrictMode       bool              `json:"strictMode,omitempty"`
 	AbstractClass    bool              `json:"abstractClass,omitempty"`
 	ClusterSelection string            `json:"clusterSelection"`
 	CustomFields     map[string]string `json:"customFields,omitempty"`
